@@ -30,6 +30,17 @@ scene("game", () => {
     area(),
     body(),
   ]);
+
+  onKeyPress("space", () => {
+    play("jump");
+    player.jump(400);
+  });
+
+  // For touch (phone)
+  window.addEventListener("touchstart", () => {
+    play("jump");
+    player.jump(400);
+  });
 });
 
 // Game over scene
