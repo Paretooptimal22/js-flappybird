@@ -31,6 +31,42 @@ scene("game", () => {
     body(),
   ]);
 
+  function createPipes() {
+    const offset = rand(-50, 50);
+    // bottom pipe
+    add([
+      sprite("pipe"),
+      pos(width(), height() / 2 + offset + PIPE_GAP / 2),
+      "pipe",
+      scale(2),
+      area(),
+      { passed: false },
+    ]);
+
+    // top pipe
+    add([
+      sprite("pipe", { flipY: true }),
+      pos(width(), height() / 2 + offset - PIPE_GAP / 2),
+      "pipe",
+      anchor("botleft"),
+      scale(2),
+      area(),
+    ]);
+  }
+
+  loop(1.5, () => createPipes());
+
+  onUpdate("pipe", (pipe) => {
+    pipe.move(-300, 0);
+
+    if (pipe.passed === false && pipe.pos.x < player.pos.x) {
+      pipe.passed = true;
+      score += 1;
+      scoreText.text = score;
+      play("pass");
+    }
+  });
+
   onKeyPress("space", () => {
     play("jump");
     player.jump(400);
@@ -45,3 +81,6 @@ scene("game", () => {
 
 // Game over scene
 scene("gameover", () => {});
+
+// Start the game
+go("game");
