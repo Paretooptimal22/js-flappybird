@@ -13,6 +13,8 @@ loadSound("jump", "sounds/jump.mp3");
 loadSound("bruh", "sounds/bruh.mp3");
 loadSound("pass", "sounds/pass.mp3");
 
+let highScore = 0;
+
 // Game scene
 scene("game", () => {
   const PIPE_GAP = 140;
@@ -67,6 +69,18 @@ scene("game", () => {
     }
   });
 
+  player.onCollide("pipe", () => {
+    const ss = screenshot();
+    go("gameover", score, ss);
+  });
+
+  player.onUpdate(() => {
+    if (player.pos.y > height()) {
+      const ss = screenshot();
+      go("gameover", score, ss);
+    }
+  });
+
   onKeyPress("space", () => {
     play("jump");
     player.jump(400);
@@ -80,7 +94,25 @@ scene("game", () => {
 });
 
 // Game over scene
-scene("gameover", () => {});
+scene("gameover", (score, screenshot) => {
+  if (score > highScore) highScore = score;
+
+  play("bruh");
+
+  loadSprite("gameOverScreen", screenshot);
+  add([sprite("gameOverScreen", { width: width(), height: height() })]);
+
+  add([
+    text("gameover!\n" + "score: " + score + "\nhigh score: " + highScore, {
+      size: 45,
+    }),
+    pos(width() / 2, height() / 3),
+  ]);
+
+  onKeyPress("space", () => {
+    go("game");
+  });
+});
 
 // Start the game
 go("game");
